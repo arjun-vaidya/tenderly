@@ -155,51 +155,48 @@
 \begin{frame}{DigitalOcean Platform Usage}
   \begin{center}
   \begin{tikzpicture}[
-    node distance=0.5cm and 0.7cm,
+    node distance=0.6cm and 1.4cm,
     svc/.style={
       rounded corners=5pt,
       draw=tenderlyForest,
       fill=tenderlyForest!10,
       text=tenderlyInk,
       minimum height=0.9cm,
-      minimum width=2.8cm,
+      minimum width=2.6cm,
       align=center,
       font=\small\bfseries,
       line width=0.8pt,
     },
     ext/.style={svc, draw=tenderlyTerra, fill=tenderlyTerra!8, font=\small},
     arr/.style={-{Stealth[length=5pt]}, tenderlyForest, line width=0.8pt},
-    lbl/.style={font=\tiny, text=tenderlyForest!80, midway},
+    lbl/.style={font=\tiny, text=tenderlyForest!80},
   ]
-    % frontend
-    \node[svc] (fe) {Static Site\\{\footnotesize React + Vite}};
+    % Left side: User -> Frontend -> Backend (horizontal)
+    \node[font=\small\bfseries, text=tenderlyInk] (user) {User};
+    \node[svc, right=1cm of user] (fe) {Static Site\\{\footnotesize React + Vite}};
+    \node[svc, right=of fe] (api) {Web Service\\{\footnotesize FastAPI}};
 
-    % backend
-    \node[svc, right=1.3cm of fe] (api) {Web Service\\{\footnotesize FastAPI}};
+    % Right side: three services stacked vertically
+    \node[ext, right=of api, yshift=1.2cm] (ai) {DO AI Platform\\{\footnotesize Gradient}};
+    \node[ext, right=of api] (db) {DO Managed\\{\footnotesize PostgreSQL}};
+    \node[ext, right=of api, yshift=-1.2cm] (soc) {SF 311 Socrata\\{\footnotesize Open Data}};
 
-    % DO AI
-    \node[ext, above right=0.4cm and 1.3cm of api] (ai) {DO AI Platform\\{\footnotesize Gradient}};
-
-    % DO Postgres
-    \node[ext, right=1.3cm of api] (db) {DO Managed\\{\footnotesize PostgreSQL}};
-
-    % Socrata
-    \node[ext, below right=0.4cm and 1.3cm of api] (soc) {SF 311 Socrata\\{\footnotesize Open Data}};
-
-    % user
-    \node[left=0.8cm of fe, font=\small\bfseries, text=tenderlyInk] (user) {User};
-
-    % arrows
+    % Arrows: left chain
     \draw[arr] (user) -- node[lbl, above] {HTTPS} (fe);
     \draw[arr] (fe) -- node[lbl, above] {REST API} (api);
-    \draw[arr] (api) -- node[lbl, above, sloped] {profile extract} (ai);
-    \draw[arr] (api) -- node[lbl, below, sloped] {why\_you batch} (ai);
-    \draw[arr] (api) -- node[lbl, above] {read/write} (db);
-    \draw[arr] (api) -- node[lbl, below, sloped] {7-day window} (soc);
 
-    % DO box
+    % Arrows: right side with clean right-angle paths
+    \draw[arr] (api.east) ++(0,0.15) -- ++(0.35,0) |- (ai.west)
+      node[lbl, pos=0.75, above] {profile + explanations};
+    \draw[arr] (api.east) -- (db.west)
+      node[lbl, pos=0.5, above] {read/write};
+    \draw[arr] (api.east) ++(0,-0.15) -- ++(0.35,0) |- (soc.west)
+      node[lbl, pos=0.75, below] {7-day needs data};
+
+    % Dashed boundary around DO-hosted services
     \node[draw=tenderlyForest!40, dashed, rounded corners=8pt, line width=0.6pt,
-          fit=(fe)(api)(ai)(db), inner sep=10pt, label={[font=\footnotesize\itshape, text=tenderlyForest]above:DigitalOcean App Platform}] {};
+          fit=(fe)(api)(ai)(db)(soc), inner sep=12pt,
+          label={[font=\footnotesize\itshape, text=tenderlyForest]above:DigitalOcean App Platform}] {};
   \end{tikzpicture}
   \end{center}
 
