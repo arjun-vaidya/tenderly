@@ -155,14 +155,13 @@
 \begin{frame}{DigitalOcean Platform Usage}
   \begin{center}
   \begin{tikzpicture}[
-    node distance=0.6cm and 1.4cm,
     svc/.style={
       rounded corners=5pt,
       draw=tenderlyForest,
       fill=tenderlyForest!10,
       text=tenderlyInk,
       minimum height=0.9cm,
-      minimum width=2.6cm,
+      minimum width=2.5cm,
       align=center,
       font=\small\bfseries,
       line width=0.8pt,
@@ -171,27 +170,31 @@
     arr/.style={-{Stealth[length=5pt]}, tenderlyForest, line width=0.8pt},
     lbl/.style={font=\tiny, text=tenderlyForest!80},
   ]
-    % Left side: User -> Frontend -> Backend (horizontal)
+    % Left side: User -> Frontend -> Backend (horizontal line)
     \node[font=\small\bfseries, text=tenderlyInk] (user) {User};
-    \node[svc, right=1cm of user] (fe) {Static Site\\{\footnotesize React + Vite}};
-    \node[svc, right=of fe] (api) {Web Service\\{\footnotesize FastAPI}};
+    \node[svc, right=0.9cm of user] (fe) {Static Site\\{\footnotesize React + Vite}};
+    \node[svc, right=1.2cm of fe] (api) {Web Service\\{\footnotesize FastAPI}};
 
-    % Right side: three services stacked vertically
-    \node[ext, right=of api, yshift=1.2cm] (ai) {DO AI Platform\\{\footnotesize Gradient}};
-    \node[ext, right=of api] (db) {DO Managed\\{\footnotesize PostgreSQL}};
-    \node[ext, right=of api, yshift=-1.2cm] (soc) {SF 311 Socrata\\{\footnotesize Open Data}};
+    % Right side: three services stacked vertically with generous spacing
+    \node[ext, right=2.8cm of api, yshift=1.3cm] (ai) {DO AI Platform\\{\footnotesize Gradient}};
+    \node[ext, right=2.8cm of api] (db) {DO Managed\\{\footnotesize PostgreSQL}};
+    \node[ext, right=2.8cm of api, yshift=-1.3cm] (soc) {SF 311 Socrata\\{\footnotesize Open Data}};
 
     % Arrows: left chain
     \draw[arr] (user) -- node[lbl, above] {HTTPS} (fe);
     \draw[arr] (fe) -- node[lbl, above] {REST API} (api);
 
-    % Arrows: right side with clean right-angle paths
-    \draw[arr] (api.east) ++(0,0.15) -- ++(0.35,0) |- (ai.west)
-      node[lbl, pos=0.75, above] {profile + explanations};
-    \draw[arr] (api.east) -- (db.west)
-      node[lbl, pos=0.5, above] {read/write};
-    \draw[arr] (api.east) ++(0,-0.15) -- ++(0.35,0) |- (soc.west)
-      node[lbl, pos=0.75, below] {7-day needs data};
+    % Arrow to AI: right-angle, label on the horizontal segment
+    \draw[arr] (api.east) ++(0,0.12) -- ++(0.7,0) |- (ai.west);
+    \node[lbl] at ($(api.east)+(1.4, 0.75)$) {profile + explanations};
+
+    % Arrow to DB: straight horizontal, label centered
+    \draw[arr] (api.east) -- (db.west);
+    \node[lbl, above] at ($(api.east)!0.5!(db.west)$) {read / write};
+
+    % Arrow to Socrata: right-angle, label on the horizontal segment
+    \draw[arr] (api.east) ++(0,-0.12) -- ++(0.7,0) |- (soc.west);
+    \node[lbl] at ($(api.east)+(1.4, -0.75)$) {7-day needs data};
 
     % Dashed boundary around DO-hosted services
     \node[draw=tenderlyForest!40, dashed, rounded corners=8pt, line width=0.6pt,
