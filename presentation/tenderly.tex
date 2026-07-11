@@ -45,17 +45,6 @@
 % ================================================================
 \begin{document}
 
-% ---------- title slide ----------
-\begin{frame}[plain]
-  \begin{center}
-    \vspace{1.5cm}
-    {\Huge\bfseries\color{tenderlyInk} Tenderly}\\[0.4cm]
-    {\large\color{tenderlyForest} AI-Powered Volunteer Matching for San Francisco}\\[1.2cm]
-    {\normalsize\color{tenderlyTerra}\textbf{When someone has the willingness to help,\\Tenderly turns uncertainty into a clear next step.}}\\[1.5cm]
-    {\small AI for Social Good --- MLH \& DigitalOcean Hackathon $\cdot$ July 2026}
-  \end{center}
-\end{frame}
-
 % ---------- the problem ----------
 \begin{frame}{The Problem}
   \begin{columns}[T]
@@ -80,75 +69,6 @@
       \end{block}
     \end{column}
   \end{columns}
-\end{frame}
-
-% ---------- user journey ----------
-\begin{frame}{User Journey}
-  \begin{center}
-  \begin{tikzpicture}[
-    node distance=0.3cm and 0.15cm,
-    flowstep/.style={
-      rounded corners=6pt,
-      draw=tenderlyForest,
-      fill=tenderlyCream,
-      text=tenderlyInk,
-      minimum height=1.1cm,
-      minimum width=2.4cm,
-      align=center,
-      font=\footnotesize\bfseries,
-      line width=0.8pt,
-    },
-    arr/.style={
-      -{Stealth[length=5pt]},
-      tenderlyForest,
-      line width=1pt,
-    },
-    lbl/.style={
-      font=\tiny,
-      text=tenderlyForest!70,
-      align=center,
-    },
-  ]
-    % row 1
-    \node[flowstep] (land) {Land on\\Tenderly};
-    \node[flowstep, right=of land] (causes) {Choose Causes\\+ Availability};
-    \node[flowstep, right=of causes] (upload) {Upload Resume\\or Sample};
-    \node[flowstep, right=of upload] (loading) {AI Profile\\Extraction};
-    \node[flowstep, right=of loading] (profile) {Review Your\\Profile};
-
-    % row 2
-    \node[flowstep, below=0.8cm of profile] (matches) {See Top 3\\Matches};
-    \node[flowstep, left=of matches] (pulse) {Community\\Pulse};
-    \node[flowstep, left=of pulse] (surge) {Simulate:\\Cold Snap};
-    \node[flowstep, left=of surge] (rerank) {Watch Cards\\Re-rank};
-    \node[flowstep, left=of rerank] (act) {\alert{Take}\\[-2pt]\alert{Action}};
-
-    % arrows row 1
-    \draw[arr] (land) -- (causes);
-    \draw[arr] (causes) -- (upload);
-    \draw[arr] (upload) -- (loading);
-    \draw[arr] (loading) -- (profile);
-
-    % connector
-    \draw[arr] (profile) -- (matches);
-
-    % arrows row 2
-    \draw[arr] (matches) -- (pulse);
-    \draw[arr] (pulse) -- (surge);
-    \draw[arr] (surge) -- (rerank);
-    \draw[arr] (rerank) -- (act);
-
-    % labels
-    \node[lbl, above=1pt of causes] {multi-select chips};
-    \node[lbl, above=1pt of upload] {PDF / TXT};
-    \node[lbl, above=1pt of loading] {DO AI Platform};
-    \node[lbl, above=1pt of profile] {name, skills, summary};
-    \node[lbl, below=1pt of matches] {why-you explanation};
-    \node[lbl, below=1pt of pulse] {SF 311 live data};
-    \node[lbl, below=1pt of surge] {scenario=surge};
-    \node[lbl, below=1pt of rerank] {animated layout};
-  \end{tikzpicture}
-  \end{center}
 \end{frame}
 
 % ---------- DigitalOcean platform usage ----------
@@ -255,52 +175,6 @@
   \end{columns}
 \end{frame}
 
-% ---------- AI: 2 calls per journey ----------
-\begin{frame}{DigitalOcean AI Platform --- Two Calls Per Journey}
-  \begin{center}
-  \begin{tikzpicture}[
-    node distance=0.25cm and 0.5cm,
-    box/.style={
-      rounded corners=5pt,
-      draw=tenderlyForest,
-      fill=tenderlyCream,
-      text=tenderlyInk,
-      minimum height=1.1cm,
-      minimum width=3.8cm,
-      align=center,
-      font=\small,
-      line width=0.8pt,
-    },
-    arr/.style={-{Stealth[length=5pt]}, tenderlyForest, line width=0.8pt},
-    num/.style={circle, fill=tenderlyTerra, text=white, font=\small\bfseries, inner sep=2pt, minimum size=0.5cm},
-  ]
-    % Call 1
-    \node[num] (n1) {1};
-    \node[box, right=0.3cm of n1] (c1) {\textbf{Profile Extraction}\\{\footnotesize Resume $\rightarrow$ structured profile}};
-
-    % Call 2
-    \node[num, below=0.5cm of n1] (n2) {2};
-    \node[box, right=0.3cm of n2] (c2) {\textbf{Match Explanations}\\{\footnotesize Top 3 $\rightarrow$ personalized ``why you''}};
-
-    % Guardrails
-    \node[box, right=0.6cm of c1, draw=tenderlyTerra, fill=tenderlyTerra!8, yshift=-0.55cm] (guard) {
-      \textbf{Safety Net}\\
-      {\footnotesize Validate $\rightarrow$ retry $\rightarrow$ fallback}
-    };
-
-    \draw[arr] (c1.east) -- ++(0.2,0) |- (guard.west);
-    \draw[arr] (c2.east) -- ++(0.2,0) |- (guard.west);
-  \end{tikzpicture}
-  \end{center}
-
-  \vspace{0.1cm}
-  \begin{center}
-    \colorbox{tenderlyCream}{\parbox{0.85\textwidth}{\centering
-    \small\textbf{Key guarantee:} If the AI service is down, responses fall back to pre-written defaults. The app never breaks.
-    }}
-  \end{center}
-\end{frame}
-
 % ---------- data ingestion pipeline ----------
 \begin{frame}{How Opportunities Get Into Tenderly}
   \begin{columns}[T]
@@ -349,121 +223,6 @@
       \end{alertblock}
     \end{column}
   \end{columns}
-\end{frame}
-
-% ---------- community needs data ----------
-\begin{frame}{Community Needs: Live SF 311 Data}
-  \begin{columns}[T]
-    \begin{column}{0.50\textwidth}
-      \begin{center}
-      \begin{tikzpicture}[
-        node distance=0.35cm,
-        box/.style={
-          rounded corners=4pt,
-          draw=tenderlyForest,
-          fill=tenderlyCream,
-          text=tenderlyInk,
-          minimum height=0.7cm,
-          minimum width=3.8cm,
-          align=center,
-          font=\footnotesize,
-          line width=0.7pt,
-        },
-        arr/.style={-{Stealth[length=4pt]}, tenderlyForest, line width=0.7pt},
-      ]
-        \node[box] (soc) {\textbf{Socrata API}\\{\tiny dataset \texttt{vw6y-z8j6}}};
-        \node[box, below=of soc] (filter) {\textbf{Filter}\\{\tiny 7-day rolling window, 500 rows}};
-        \node[box, below=of filter] (norm) {\textbf{Normalize}\\{\tiny deduplicate neighborhood names}};
-        \node[box, below=of norm] (agg) {\textbf{Aggregate}\\{\tiny case counts per neighborhood}};
-        \node[box, below=of agg, draw=tenderlyTerra] (cache) {\textbf{10-min Cache}\\{\tiny snapshot fallback on failure}};
-
-        \draw[arr] (soc) -- (filter);
-        \draw[arr] (filter) -- (norm);
-        \draw[arr] (norm) -- (agg);
-        \draw[arr] (agg) -- (cache);
-      \end{tikzpicture}
-      \end{center}
-    \end{column}
-    \begin{column}{0.46\textwidth}
-      \begin{block}{Data Rules}
-        \begin{itemize}\setlength\itemsep{1pt}
-          \item {\small Freshness label with timestamp}
-          \item {\small Stale data labelled honestly}
-          \item {\small Counts as context, not crisis claims}
-          \item {\small Top 8 neighborhoods shown}
-        \end{itemize}
-      \end{block}
-      \vspace{0.15cm}
-      \begin{alertblock}{Fallback Guarantee}
-        {\small If Socrata is unreachable, a bundled snapshot is served with the same format --- the UI never breaks.}
-      \end{alertblock}
-    \end{column}
-  \end{columns}
-\end{frame}
-
-% ---------- database schema ----------
-\begin{frame}{Data Model}
-  \begin{center}
-  \begin{tikzpicture}[
-    node distance=0.3cm and 0.9cm,
-    tbl/.style={
-      rounded corners=4pt,
-      draw=tenderlyForest,
-      fill=tenderlyCream,
-      text=tenderlyInk,
-      minimum width=3cm,
-      align=left,
-      font=\footnotesize,
-      line width=0.7pt,
-      inner sep=5pt,
-    },
-    arr/.style={-{Stealth[length=4pt]}, tenderlyForest!60, line width=0.6pt},
-  ]
-    \node[tbl] (org) {
-      \textbf{organizations}\\[1pt]
-      {\tiny id, name, website}
-    };
-
-    \node[tbl, right=1.2cm of org] (opp) {
-      \textbf{opportunities}\\[1pt]
-      {\tiny opportunity\_id, org $\rightarrow$ organizations}\\
-      {\tiny title, category, neighborhood}\\
-      {\tiny skills[], causes[], urgency, status}
-    };
-
-    \node[tbl, below=0.5cm of org] (imp) {
-      \textbf{opportunity\_imports}\\[1pt]
-      {\tiny source\_id, content\_hash}\\
-      {\tiny status, parsed\_records}
-    };
-
-    \node[tbl, below=0.5cm of opp] (stg) {
-      \textbf{opportunity\_staging}\\[1pt]
-      {\tiny import $\rightarrow$ imports}\\
-      {\tiny candidate, confidence (0--1)}\\
-      {\tiny review\_status}
-    };
-
-    \draw[arr] (opp.west) -- node[above, font=\tiny, text=tenderlyForest!60] {FK} (org.east);
-    \draw[arr] (stg.west) -- node[above, font=\tiny, text=tenderlyForest!60] {FK} (imp.east);
-    \draw[arr] (stg.north) -- node[right, font=\tiny, text=tenderlyForest!60] {promote} (opp.south);
-  \end{tikzpicture}
-  \end{center}
-
-  \centering
-  {\small\color{tenderlyForest} Every recommendation traces back to an approved source and parser run.}
-\end{frame}
-
-% ---------- closing ----------
-\begin{frame}[plain]
-  \begin{center}
-    \vspace{2cm}
-    {\Huge\bfseries\color{tenderlyInk} Tenderly}\\[0.6cm]
-    {\large\color{tenderlyForest} When someone has the willingness to help,}\\[0.1cm]
-    {\large\color{tenderlyForest} Tenderly turns uncertainty into a clear next step.}\\[1.5cm]
-    {\normalsize\color{tenderlyTerra} Deployed on DigitalOcean App Platform}\\[0.2cm]
-    {\small Powered by DigitalOcean AI Platform $\cdot$ Live SF 311 Open Data $\cdot$ PostgreSQL}
-  \end{center}
 \end{frame}
 
 \end{document}
