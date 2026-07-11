@@ -95,26 +95,21 @@
     \node[svc, right=0.9cm of user] (fe) {Static Site\\{\footnotesize React + Vite}};
     \node[svc, right=1.2cm of fe] (api) {Web Service\\{\footnotesize FastAPI}};
 
-    % Right side: three services stacked vertically with generous spacing
-    \node[ext, right=2.8cm of api, yshift=1.3cm] (ai) {DO AI Platform\\{\footnotesize Gradient}};
-    \node[ext, right=2.8cm of api] (db) {DO Managed\\{\footnotesize PostgreSQL}};
-    \node[ext, right=2.8cm of api, yshift=-1.3cm] (soc) {SF 311 Socrata\\{\footnotesize Open Data}};
+    % Right side: two DO services stacked vertically
+    \node[ext, right=2.8cm of api, yshift=0.7cm] (ai) {DO AI Platform\\{\footnotesize Gradient}};
+    \node[ext, right=2.8cm of api, yshift=-0.7cm] (db) {DO Managed\\{\footnotesize PostgreSQL}};
 
     % Arrows: left chain
     \draw[arr] (user) -- node[lbl, above] {HTTPS} (fe);
     \draw[arr] (fe) -- node[lbl, above] {REST API} (api);
 
     % Arrow to AI: right-angle, label on the horizontal segment
-    \draw[arr] (api.east) ++(0,0.12) -- ++(0.7,0) |- (ai.west);
-    \node[lbl] at ($(api.east)+(1.4, 0.75)$) {profile + explanations};
+    \draw[arr] (api.east) ++(0,0.1) -- ++(0.7,0) |- (ai.west);
+    \node[lbl] at ($(api.east)+(1.4, 0.45)$) {profile + explanations};
 
-    % Arrow to DB: straight horizontal, label centered
-    \draw[arr] (api.east) -- (db.west);
-    \node[lbl, above] at ($(api.east)!0.5!(db.west)$) {read / write};
-
-    % Arrow to Socrata: right-angle, label on the horizontal segment
-    \draw[arr] (api.east) ++(0,-0.12) -- ++(0.7,0) |- (soc.west);
-    \node[lbl] at ($(api.east)+(1.4, -0.75)$) {7-day needs data};
+    % Arrow to DB: right-angle
+    \draw[arr] (api.east) ++(0,-0.1) -- ++(0.7,0) |- (db.west);
+    \node[lbl] at ($(api.east)+(1.4, -0.45)$) {read / write};
 
     % Dashed boundary around DO-hosted services (Socrata is external)
     \node[draw=tenderlyForest!40, dashed, rounded corners=8pt, line width=0.6pt,
