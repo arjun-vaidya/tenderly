@@ -22,6 +22,11 @@
 \setbeamerfont{title}{series=\bfseries, size=\Large}
 \setbeamerfont{frametitle}{series=\bfseries}
 
+% Tighter block spacing globally
+\setlength{\parskip}{0pt}
+\addtobeamertemplate{block begin}{}{\vspace{-2pt}}
+\addtobeamertemplate{block end}{\vspace{-2pt}}{}
+
 % ---------- packages ----------
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -58,18 +63,18 @@
       \textbf{People want to help but hit three kinds of friction:}
       \begin{enumerate}
         \item They don't know which organization needs \emph{their} particular skills
-        \item Long, undifferentiated opportunity lists feel overwhelming
-        \item Urgency is invisible --- volunteers can't tell when a small commitment could matter most
+        \item Long opportunity lists feel overwhelming
+        \item Urgency is invisible --- volunteers can't tell when help matters most
       \end{enumerate}
-      \vspace{0.4cm}
-      Meanwhile, nonprofits must explain needs repeatedly and compete for attention even as conditions change across the city.
+      \vspace{0.3cm}
+      {\small Meanwhile, nonprofits compete for attention even as conditions change across the city.}
     \end{column}
     \begin{column}{0.4\textwidth}
       \begin{block}{The Gap}
         \centering
         \textbf{50 listings to browse}\\
-        $\downarrow$\\[0.2cm]
-        \alert{No clear next step}\\[0.2cm]
+        $\downarrow$\\[0.15cm]
+        \alert{No clear next step}\\[0.15cm]
         $\downarrow$\\
         \textbf{Volunteer gives up}
       \end{block}
@@ -150,14 +155,14 @@
 \begin{frame}{DigitalOcean Platform Usage}
   \begin{center}
   \begin{tikzpicture}[
-    node distance=0.6cm and 0.8cm,
+    node distance=0.5cm and 0.7cm,
     svc/.style={
       rounded corners=5pt,
       draw=tenderlyForest,
       fill=tenderlyForest!10,
       text=tenderlyInk,
-      minimum height=1cm,
-      minimum width=3cm,
+      minimum height=0.9cm,
+      minimum width=2.8cm,
       align=center,
       font=\small\bfseries,
       line width=0.8pt,
@@ -170,19 +175,19 @@
     \node[svc] (fe) {Static Site\\{\footnotesize React + Vite}};
 
     % backend
-    \node[svc, right=1.5cm of fe] (api) {Web Service\\{\footnotesize FastAPI}};
+    \node[svc, right=1.3cm of fe] (api) {Web Service\\{\footnotesize FastAPI}};
 
     % DO AI
-    \node[ext, above right=0.5cm and 1.5cm of api] (ai) {DO AI Platform\\{\footnotesize Gradient}};
+    \node[ext, above right=0.4cm and 1.3cm of api] (ai) {DO AI Platform\\{\footnotesize Gradient}};
 
     % DO Postgres
-    \node[ext, right=1.5cm of api] (db) {DO Managed\\{\footnotesize PostgreSQL}};
+    \node[ext, right=1.3cm of api] (db) {DO Managed\\{\footnotesize PostgreSQL}};
 
     % Socrata
-    \node[ext, below right=0.5cm and 1.5cm of api] (soc) {SF 311 Socrata\\{\footnotesize Open Data}};
+    \node[ext, below right=0.4cm and 1.3cm of api] (soc) {SF 311 Socrata\\{\footnotesize Open Data}};
 
     % user
-    \node[left=1cm of fe, font=\small\bfseries, text=tenderlyInk] (user) {User};
+    \node[left=0.8cm of fe, font=\small\bfseries, text=tenderlyInk] (user) {User};
 
     % arrows
     \draw[arr] (user) -- node[lbl, above] {HTTPS} (fe);
@@ -194,15 +199,15 @@
 
     % DO box
     \node[draw=tenderlyForest!40, dashed, rounded corners=8pt, line width=0.6pt,
-          fit=(fe)(api)(ai)(db), inner sep=12pt, label={[font=\footnotesize\itshape, text=tenderlyForest]above:DigitalOcean App Platform}] {};
+          fit=(fe)(api)(ai)(db), inner sep=10pt, label={[font=\footnotesize\itshape, text=tenderlyForest]above:DigitalOcean App Platform}] {};
   \end{tikzpicture}
   \end{center}
 
-  \vspace{0.2cm}
+  \vspace{0.1cm}
   \begin{columns}[T]
     \begin{column}{0.32\textwidth}
       \textbf{\color{tenderlyForest}Static Site}\\
-      {\small Frontend built from Vite, serves \texttt{dist/}}
+      {\small Frontend built from Vite}
     \end{column}
     \begin{column}{0.32\textwidth}
       \textbf{\color{tenderlyForest}Web Service}\\
@@ -210,7 +215,7 @@
     \end{column}
     \begin{column}{0.32\textwidth}
       \textbf{\color{tenderlyForest}AI Platform}\\
-      {\small 2 inference calls per user journey}
+      {\small 2 calls per user journey}
     \end{column}
   \end{columns}
 \end{frame}
@@ -218,32 +223,33 @@
 % ---------- AI: how matching works ----------
 \begin{frame}{How Matching Works}
   \begin{columns}[T]
-    \begin{column}{0.5\textwidth}
+    \begin{column}{0.48\textwidth}
       \begin{block}{Weighted Match Score}
-        \vspace{0.2cm}
+        \vspace{0.05cm}
         \[
-          \text{score} = \underbrace{0.45}_{\text{skills}} + \underbrace{0.25}_{\text{causes}} + \underbrace{0.20}_{\text{availability}} + \underbrace{0.10}_{\text{location}}
+          \text{score} = \underbrace{0.45}_{\text{skills}} + \underbrace{0.25}_{\text{causes}} + \underbrace{0.20}_{\text{avail.}} + \underbrace{0.10}_{\text{location}}
         \]
-        \vspace{0.1cm}
+        \vspace{-0.15cm}
       \end{block}
-      \vspace{0.3cm}
-      \textbf{Skills} --- do your abilities match what the org needs?\\[0.2cm]
-      \textbf{Causes} --- do you care about the same issues?\\[0.2cm]
-      \textbf{Availability} --- can you show up when they need you?\\[0.2cm]
-      \textbf{Location} --- how active is community need in that neighborhood?
+      \vspace{0.1cm}
+      {\small
+      \textbf{Skills} --- do your abilities match the org's needs?\\[0.06cm]
+      \textbf{Causes} --- do you care about the same issues?\\[0.06cm]
+      \textbf{Availability} --- can you show up when needed?\\[0.06cm]
+      \textbf{Location} --- how active is need nearby?
+      }
     \end{column}
-    \begin{column}{0.45\textwidth}
+    \begin{column}{0.48\textwidth}
       \begin{block}{What Happens in a Cold Snap?}
-        When conditions change in SF:
-        \begin{itemize}
-          \item Food and shelter roles get a \textbf{score boost}
-          \item Neighborhoods with more reported need rise higher
-          \item Urgency labels update (medium $\rightarrow$ high)
+        \begin{itemize}\setlength\itemsep{0pt}
+          \item {\small Food \& shelter roles get a \textbf{score boost}}
+          \item {\small Higher-need neighborhoods rise in ranking}
+          \item {\small Urgency labels update (medium $\rightarrow$ high)}
         \end{itemize}
       \end{block}
-      \vspace{0.3cm}
+      \vspace{0.1cm}
       \begin{alertblock}{Explainable, Not a Black Box}
-        Every recommendation comes with a plain-language reason: \emph{``Your project management skills and weekend availability make you a strong fit for this shelter coordination role.''}
+        {\small Every match includes a plain-language reason so the volunteer knows \emph{why}.}
       \end{alertblock}
     \end{column}
   \end{columns}
@@ -253,46 +259,44 @@
 \begin{frame}{DigitalOcean AI Platform --- Two Calls Per Journey}
   \begin{center}
   \begin{tikzpicture}[
-    node distance=0.4cm and 0.6cm,
+    node distance=0.25cm and 0.5cm,
     box/.style={
       rounded corners=5pt,
       draw=tenderlyForest,
       fill=tenderlyCream,
       text=tenderlyInk,
-      minimum height=1.3cm,
-      minimum width=4.2cm,
+      minimum height=1.1cm,
+      minimum width=3.8cm,
       align=center,
       font=\small,
       line width=0.8pt,
     },
     arr/.style={-{Stealth[length=5pt]}, tenderlyForest, line width=0.8pt},
-    num/.style={circle, fill=tenderlyTerra, text=white, font=\small\bfseries, inner sep=2pt, minimum size=0.6cm},
+    num/.style={circle, fill=tenderlyTerra, text=white, font=\small\bfseries, inner sep=2pt, minimum size=0.5cm},
   ]
     % Call 1
     \node[num] (n1) {1};
-    \node[box, right=0.3cm of n1] (c1) {\textbf{Profile Extraction}\\{\footnotesize Resume + interests + availability}\\{\footnotesize $\rightarrow$ structured volunteer profile}};
+    \node[box, right=0.3cm of n1] (c1) {\textbf{Profile Extraction}\\{\footnotesize Resume $\rightarrow$ structured profile}};
 
     % Call 2
-    \node[num, below=0.8cm of n1] (n2) {2};
-    \node[box, right=0.3cm of n2] (c2) {\textbf{Match Explanations}\\{\footnotesize Top 3 matches + profile + needs}\\{\footnotesize $\rightarrow$ 3 personalized ``why you'' reasons}};
+    \node[num, below=0.5cm of n1] (n2) {2};
+    \node[box, right=0.3cm of n2] (c2) {\textbf{Match Explanations}\\{\footnotesize Top 3 $\rightarrow$ personalized ``why you''}};
 
     % Guardrails
-    \node[box, right=0.8cm of c1, draw=tenderlyTerra, fill=tenderlyTerra!8, yshift=-0.75cm] (guard) {
+    \node[box, right=0.6cm of c1, draw=tenderlyTerra, fill=tenderlyTerra!8, yshift=-0.55cm] (guard) {
       \textbf{Safety Net}\\
-      {\footnotesize Validate AI output}\\
-      {\footnotesize Retry once if needed}\\
-      {\footnotesize Fall back to safe defaults}
+      {\footnotesize Validate $\rightarrow$ retry $\rightarrow$ fallback}
     };
 
-    \draw[arr] (c1.east) -- ++(0.3,0) |- (guard.west);
-    \draw[arr] (c2.east) -- ++(0.3,0) |- (guard.west);
+    \draw[arr] (c1.east) -- ++(0.2,0) |- (guard.west);
+    \draw[arr] (c2.east) -- ++(0.2,0) |- (guard.west);
   \end{tikzpicture}
   \end{center}
 
-  \vspace{0.3cm}
+  \vspace{0.1cm}
   \begin{center}
     \colorbox{tenderlyCream}{\parbox{0.85\textwidth}{\centering
-    \small\textbf{Key guarantee:} If the AI service is down, every response falls back to pre-written defaults. The app keeps working --- the volunteer just sees a generic explanation instead of a personalized one.
+    \small\textbf{Key guarantee:} If the AI service is down, responses fall back to pre-written defaults. The app never breaks.
     }}
   \end{center}
 \end{frame}
@@ -300,17 +304,17 @@
 % ---------- data ingestion pipeline ----------
 \begin{frame}{How Opportunities Get Into Tenderly}
   \begin{columns}[T]
-    \begin{column}{0.48\textwidth}
+    \begin{column}{0.46\textwidth}
       \begin{center}
       \begin{tikzpicture}[
-        node distance=0.35cm,
+        node distance=0.25cm,
         flowstep/.style={
           rounded corners=5pt,
           draw=tenderlyForest,
           fill=tenderlyForest!8,
           text=tenderlyInk,
-          minimum height=0.85cm,
-          minimum width=3.8cm,
+          minimum height=0.75cm,
+          minimum width=3.6cm,
           align=center,
           font=\footnotesize,
           line width=0.7pt,
@@ -331,17 +335,17 @@
       \end{tikzpicture}
       \end{center}
     \end{column}
-    \begin{column}{0.48\textwidth}
+    \begin{column}{0.50\textwidth}
       \begin{block}{Runs Every 6 Hours}
-        A scheduled job on DigitalOcean pulls the latest listings from partner nonprofits, so the catalog stays fresh without manual updates.
+        {\small A scheduled job pulls the latest listings from partner nonprofits automatically.}
       \end{block}
-      \vspace{0.3cm}
+      \vspace{0.15cm}
       \begin{block}{Smart Deduplication}
-        Each import is fingerprinted. If the source page hasn't changed, we skip it. If our parsing rules change, we re-evaluate even unchanged pages.
+        {\small Each import is fingerprinted. Unchanged pages are skipped. Changed parsing rules trigger re-evaluation.}
       \end{block}
-      \vspace{0.3cm}
+      \vspace{0.15cm}
       \begin{alertblock}{Source Isolation}
-        If one partner's website goes down, all other sources still import normally. One failure never blocks the rest.
+        {\small If one partner's site goes down, all other sources still import normally.}
       \end{alertblock}
     \end{column}
   \end{columns}
@@ -350,17 +354,17 @@
 % ---------- community needs data ----------
 \begin{frame}{Community Needs: Live SF 311 Data}
   \begin{columns}[T]
-    \begin{column}{0.55\textwidth}
+    \begin{column}{0.50\textwidth}
       \begin{center}
       \begin{tikzpicture}[
-        node distance=0.5cm,
+        node distance=0.35cm,
         box/.style={
           rounded corners=4pt,
           draw=tenderlyForest,
           fill=tenderlyCream,
           text=tenderlyInk,
-          minimum height=0.8cm,
-          minimum width=4cm,
+          minimum height=0.7cm,
+          minimum width=3.8cm,
           align=center,
           font=\footnotesize,
           line width=0.7pt,
@@ -369,9 +373,9 @@
       ]
         \node[box] (soc) {\textbf{Socrata API}\\{\tiny dataset \texttt{vw6y-z8j6}}};
         \node[box, below=of soc] (filter) {\textbf{Filter}\\{\tiny 7-day rolling window, 500 rows}};
-        \node[box, below=of filter] (norm) {\textbf{Normalize}\\{\tiny title-case dedup neighborhoods}};
-        \node[box, below=of norm] (agg) {\textbf{Aggregate}\\{\tiny case counts + encampment share}};
-        \node[box, below=of agg, draw=tenderlyTerra] (cache) {\textbf{10-min Memory Cache}\\{\tiny snapshot fallback on failure}};
+        \node[box, below=of filter] (norm) {\textbf{Normalize}\\{\tiny deduplicate neighborhood names}};
+        \node[box, below=of norm] (agg) {\textbf{Aggregate}\\{\tiny case counts per neighborhood}};
+        \node[box, below=of agg, draw=tenderlyTerra] (cache) {\textbf{10-min Cache}\\{\tiny snapshot fallback on failure}};
 
         \draw[arr] (soc) -- (filter);
         \draw[arr] (filter) -- (norm);
@@ -380,19 +384,18 @@
       \end{tikzpicture}
       \end{center}
     \end{column}
-    \begin{column}{0.42\textwidth}
+    \begin{column}{0.46\textwidth}
       \begin{block}{Data Rules}
-        \begin{itemize}
-          \item Freshness label with \texttt{updated\_at} timestamp
-          \item Stale data labelled honestly, never faked as live
-          \item Counts as directional context, not crisis claims
-          \item Top 8 neighborhoods by case volume
-          \item Top 3 categories per neighborhood
+        \begin{itemize}\setlength\itemsep{1pt}
+          \item {\small Freshness label with timestamp}
+          \item {\small Stale data labelled honestly}
+          \item {\small Counts as context, not crisis claims}
+          \item {\small Top 8 neighborhoods shown}
         \end{itemize}
       \end{block}
-      \vspace{0.3cm}
+      \vspace{0.15cm}
       \begin{alertblock}{Fallback Guarantee}
-        {\small If Socrata is unreachable, \texttt{needs\_snapshot.json} is served with the same contract shape --- the matching engine and UI never break.}
+        {\small If Socrata is unreachable, a bundled snapshot is served with the same format --- the UI never breaks.}
       \end{alertblock}
     \end{column}
   \end{columns}
@@ -402,52 +405,43 @@
 \begin{frame}{Data Model}
   \begin{center}
   \begin{tikzpicture}[
-    node distance=0.4cm and 1cm,
+    node distance=0.3cm and 0.9cm,
     tbl/.style={
       rounded corners=4pt,
       draw=tenderlyForest,
       fill=tenderlyCream,
       text=tenderlyInk,
-      minimum width=3.2cm,
+      minimum width=3cm,
       align=left,
       font=\footnotesize,
       line width=0.7pt,
-      inner sep=6pt,
+      inner sep=5pt,
     },
     arr/.style={-{Stealth[length=4pt]}, tenderlyForest!60, line width=0.6pt},
   ]
     \node[tbl] (org) {
-      \textbf{organizations}\\[2pt]
-      {\tiny id (UUID PK)}\\
-      {\tiny name (UNIQUE)}\\
-      {\tiny website}
+      \textbf{organizations}\\[1pt]
+      {\tiny id, name, website}
     };
 
     \node[tbl, right=1.2cm of org] (opp) {
-      \textbf{opportunities}\\[2pt]
-      {\tiny opportunity\_id (PK)}\\
-      {\tiny org $\rightarrow$ organizations}\\
+      \textbf{opportunities}\\[1pt]
+      {\tiny opportunity\_id, org $\rightarrow$ organizations}\\
       {\tiny title, category, neighborhood}\\
-      {\tiny lat, lng, commitment}\\
-      {\tiny needed\_skills[], causes[]}\\
-      {\tiny base\_urgency, status}
+      {\tiny skills[], causes[], urgency, status}
     };
 
-    \node[tbl, below=0.6cm of org] (imp) {
-      \textbf{opportunity\_imports}\\[2pt]
-      {\tiny id (UUID PK)}\\
-      {\tiny source\_id, source\_url}\\
-      {\tiny content\_hash (dedup)}\\
+    \node[tbl, below=0.5cm of org] (imp) {
+      \textbf{opportunity\_imports}\\[1pt]
+      {\tiny source\_id, content\_hash}\\
       {\tiny status, parsed\_records}
     };
 
-    \node[tbl, below=0.6cm of opp] (stg) {
-      \textbf{opportunity\_staging}\\[2pt]
-      {\tiny import\_id $\rightarrow$ imports}\\
-      {\tiny candidate (JSONB)}\\
-      {\tiny confidence (0--1)}\\
-      {\tiny review\_status}\\
-      {\tiny promoted\_opportunity\_id}
+    \node[tbl, below=0.5cm of opp] (stg) {
+      \textbf{opportunity\_staging}\\[1pt]
+      {\tiny import $\rightarrow$ imports}\\
+      {\tiny candidate, confidence (0--1)}\\
+      {\tiny review\_status}
     };
 
     \draw[arr] (opp.west) -- node[above, font=\tiny, text=tenderlyForest!60] {FK} (org.east);
@@ -456,9 +450,8 @@
   \end{tikzpicture}
   \end{center}
 
-  \vspace{0.2cm}
   \centering
-  {\small\color{tenderlyForest} Every recommendation traces back to an approved source and a specific parser run.}
+  {\small\color{tenderlyForest} Every recommendation traces back to an approved source and parser run.}
 \end{frame}
 
 % ---------- closing ----------
