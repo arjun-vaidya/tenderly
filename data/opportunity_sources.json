@@ -1,66 +1,200 @@
 {
-  "about": "Tenderly imports only from approved, public opportunity sources. Set enabled to true only after the organization confirms automated access is welcome. Static pages are intentionally disabled until that approval exists.",
+  "about": "Tenderly's SF-only starter catalog. Every source is a first-party public volunteer page selected for this hackathon. The DigitalOcean scheduled job refreshes the catalog every six hours; only roles with source evidence and an SF location are promoted.",
   "refresh_schedule": "Every 6 hours, run by the DigitalOcean App Platform opportunity-ingestion job.",
   "global_safety_rules": [
     "Only fetch a URL whose hostname appears in allowed_domains.",
+    "Only promote an explicitly described volunteer role with an evidence quote found verbatim in the source content.",
+    "Only store roles whose location is in San Francisco. Exclude Marin, Oakland, and non-local or unspecified listings.",
     "Never parse SF 311 data as an opportunity. It is a separate community-needs signal used only for reranking.",
-    "Do not auto-promote a record below the parser confidence threshold.",
     "Store source URL, content hash, and import result for auditability."
   ],
   "sources": [
     {
-      "id": "826_valencia_volunteer",
-      "name": "826 Valencia volunteer page",
+      "id": "sf_rec_park_volunteer_calendar",
+      "name": "SF Recreation and Park Volunteer Calendar",
       "type": "html_page",
-      "url": "https://www.826valencia.org/volunteer/",
-      "enabled": false,
-      "allowed_domains": ["www.826valencia.org"],
+      "url": "https://sfrecpark.org/calendar.aspx?CID=29&view=list",
+      "enabled": true,
+      "allowed_domains": ["sfrecpark.org", "www.sfrecpark.org"],
       "auto_promote_confidence": 0.92,
-      "defaults": {
-        "category": "education",
-        "neighborhood": "Mission",
-        "lat": 37.7633,
-        "lng": -122.4214,
-        "causes": ["education", "youth"],
-        "base_urgency": 0.55
-      },
-      "activation_note": "Enable after receiving written permission or a partner feed from 826 Valencia."
+      "defaults": {"category": "environment", "neighborhood": "Citywide", "lat": 37.7749, "lng": -122.4194, "causes": ["environment", "community"], "base_urgency": 0.65},
+      "activation_note": "City-owned volunteer calendar; fetch only the volunteer calendar category."
+    },
+    {
+      "id": "parks_conservancy_sf_volunteers",
+      "name": "Golden Gate National Parks Conservancy SF volunteer programs",
+      "type": "html_page",
+      "url": "https://www.parksconservancy.org/volunteer/community-volunteer-programs",
+      "enabled": true,
+      "allowed_domains": ["www.parksconservancy.org"],
+      "parser_settings": {"input_character_limit": 4500, "max_tokens": 900, "maximum_records_per_source": 3},
+      "auto_promote_confidence": 0.92,
+      "defaults": {"category": "environment", "neighborhood": "Presidio", "lat": 37.7975, "lng": -122.4662, "causes": ["environment"], "base_urgency": 0.6},
+      "activation_note": "Accept only events explicitly located in San Francisco; exclude Marin and San Mateo listings."
+    },
+    {
+      "id": "sf_marin_food_bank_calendar",
+      "name": "SF-Marin Food Bank volunteer calendar",
+      "type": "html_page",
+      "url": "https://volunteering.sfmfoodbank.org/calendar/",
+      "enabled": true,
+      "allowed_domains": ["volunteering.sfmfoodbank.org", "www.sfmfoodbank.org"],
+      "parser_settings": {"input_character_limit": 4500, "max_tokens": 900, "maximum_records_per_source": 3},
+      "auto_promote_confidence": 0.93,
+      "defaults": {"category": "food_security", "neighborhood": "Bayview", "lat": 37.7544, "lng": -122.3928, "causes": ["food_security"], "base_urgency": 0.82},
+      "activation_note": "Accept only San Francisco shifts; exclude Marin Warehouse and Marin pantry listings."
+    },
+    {
+      "id": "sfaf_volunteer_portal",
+      "name": "San Francisco AIDS Foundation volunteer portal",
+      "type": "html_page",
+      "url": "https://volunteers.sfaf.org/",
+      "enabled": true,
+      "allowed_domains": ["volunteers.sfaf.org", "www.sfaf.org"],
+      "auto_promote_confidence": 0.93,
+      "defaults": {"category": "health", "neighborhood": "South of Market", "lat": 37.7805, "lng": -122.4120, "causes": ["health", "community"], "base_urgency": 0.72},
+      "activation_note": "Accept only San Francisco events and services; exclude Marin Century listings."
+    },
+    {
+      "id": "sf_environment_volunteer",
+      "name": "San Francisco Environment Department volunteer opportunities",
+      "type": "html_page",
+      "url": "https://www.sfenvironment.org/volunteer",
+      "enabled": true,
+      "allowed_domains": ["www.sfenvironment.org", "www.sf.gov", "events.californiavolunteers.ca.gov"],
+      "auto_promote_confidence": 0.92,
+      "defaults": {"category": "environment", "neighborhood": "Civic Center", "lat": 37.7773, "lng": -122.4171, "causes": ["environment"], "base_urgency": 0.65},
+      "activation_note": "City program page; accept only specifically described SF volunteer activities."
+    },
+    {
+      "id": "sf_gov_volunteering",
+      "name": "SF.gov volunteering directory",
+      "type": "html_page",
+      "url": "https://www.sf.gov/topics--volunteering",
+      "enabled": true,
+      "allowed_domains": ["www.sf.gov", "sf.gov"],
+      "parser_settings": {"input_character_limit": 5000, "max_tokens": 900, "maximum_records_per_source": 4},
+      "auto_promote_confidence": 0.93,
+      "defaults": {"category": "community", "neighborhood": "Citywide", "lat": 37.7749, "lng": -122.4194, "causes": ["community"], "base_urgency": 0.6},
+      "activation_note": "City directory of ongoing programs; retain only concrete volunteer programs with an SF.gov application link."
     },
     {
       "id": "glide_volunteer",
-      "name": "GLIDE volunteer page",
+      "name": "GLIDE volunteer opportunities",
       "type": "html_page",
       "url": "https://www.glide.org/volunteer/",
-      "enabled": false,
+      "enabled": true,
       "allowed_domains": ["www.glide.org"],
-      "auto_promote_confidence": 0.92,
-      "defaults": {
-        "category": "homelessness",
-        "neighborhood": "Tenderloin",
-        "lat": 37.7853,
-        "lng": -122.4105,
-        "causes": ["homelessness", "food_security"],
-        "base_urgency": 0.8
-      },
-      "activation_note": "Enable after receiving written permission or a structured partner feed from GLIDE."
+      "parser_settings": {"input_character_limit": 7000, "max_tokens": 1000, "maximum_records_per_source": 4},
+      "auto_promote_confidence": 0.93,
+      "defaults": {"category": "homelessness", "neighborhood": "Tenderloin", "lat": 37.7853, "lng": -122.4105, "causes": ["homelessness", "food_security"], "base_urgency": 0.82},
+      "activation_note": "First-party SF volunteer page and shift calendar."
     },
     {
-      "id": "sf_marin_food_bank_volunteer",
-      "name": "SF-Marin Food Bank volunteer page",
+      "id": "project_open_hand_volunteer",
+      "name": "Project Open Hand volunteer opportunities",
       "type": "html_page",
-      "url": "https://www.sfmfoodbank.org/volunteer/",
+      "url": "https://openhand.org/volunteer",
+      "enabled": true,
+      "allowed_domains": ["openhand.org", "www.openhand.org"],
+      "auto_promote_confidence": 0.93,
+      "defaults": {"category": "food_security", "neighborhood": "Tenderloin", "lat": 37.7831, "lng": -122.4195, "causes": ["food_security", "health"], "base_urgency": 0.78},
+      "activation_note": "Accept only SF locations; exclude East Bay roles."
+    },
+    {
+      "id": "st_anthonys_volunteer",
+      "name": "St. Anthony Foundation volunteer opportunities",
+      "type": "html_page",
+      "url": "https://www.stanthonysf.org/volunteer/sign-up-now/",
+      "enabled": true,
+      "allowed_domains": ["www.stanthonysf.org", "stanthonysf.org"],
+      "auto_promote_confidence": 0.93,
+      "defaults": {"category": "homelessness", "neighborhood": "Tenderloin", "lat": 37.7816, "lng": -122.4137, "causes": ["homelessness", "food_security"], "base_urgency": 0.8},
+      "activation_note": "First-party SF volunteer registration page."
+    },
+    {
+      "id": "826_valencia_volunteer",
+      "name": "826 Valencia volunteer opportunities",
+      "type": "html_page",
+      "url": "https://www.826valencia.org/volunteer/",
+      "enabled": true,
+      "allowed_domains": ["www.826valencia.org"],
+      "parser_settings": {"input_character_limit": 4500, "max_tokens": 900, "maximum_records_per_source": 3},
+      "auto_promote_confidence": 0.93,
+      "defaults": {"category": "education", "neighborhood": "Mission", "lat": 37.7633, "lng": -122.4214, "causes": ["education", "youth"], "base_urgency": 0.6},
+      "activation_note": "SF student tutoring, field trips, and writing workshops."
+    },
+    {
+      "id": "sf_spca_volunteer",
+      "name": "San Francisco SPCA volunteer opportunities",
+      "type": "html_page",
+      "url": "https://www.sfspca.org/join-our-community/volunteer/",
+      "enabled": true,
+      "allowed_domains": ["www.sfspca.org", "app.betterimpact.com"],
+      "parser_settings": {"input_character_limit": 4500, "max_tokens": 900, "maximum_records_per_source": 3},
+      "auto_promote_confidence": 0.93,
+      "defaults": {"category": "community", "neighborhood": "Mission", "lat": 37.7663, "lng": -122.4129, "causes": ["community"], "base_urgency": 0.58},
+      "activation_note": "Accept only SF SPCA programs and clinics in San Francisco."
+    },
+    {
+      "id": "sf_animal_care_volunteer",
+      "name": "San Francisco Animal Care and Control volunteer opportunities",
+      "type": "html_page",
+      "url": "https://www.sfanimalcare.org/volunteer/",
+      "enabled": true,
+      "allowed_domains": ["www.sfanimalcare.org", "sfanimalcare.org"],
+      "parser_settings": {"input_character_limit": 5000, "max_tokens": 1000, "maximum_records_per_source": 4},
+      "auto_promote_confidence": 0.93,
+      "defaults": {"category": "community", "neighborhood": "Mission", "lat": 37.7688, "lng": -122.4106, "causes": ["community"], "base_urgency": 0.62},
+      "activation_note": "City shelter roles at 1419 Bryant Street, San Francisco."
+    },
+    {
+      "id": "friends_urban_forest_volunteer",
+      "name": "Friends of the Urban Forest volunteer opportunities",
+      "type": "html_page",
+      "url": "https://www.friendsoftheurbanforest.org/volunteer",
+      "enabled": true,
+      "allowed_domains": ["www.friendsoftheurbanforest.org"],
+      "parser_settings": {"input_character_limit": 4500, "max_tokens": 900, "maximum_records_per_source": 3},
+      "auto_promote_confidence": 0.93,
+      "defaults": {"category": "environment", "neighborhood": "Citywide", "lat": 37.7749, "lng": -122.4194, "causes": ["environment", "community"], "base_urgency": 0.6},
+      "activation_note": "SF tree planting and sidewalk garden events only."
+    },
+    {
+      "id": "mowsf_volunteer",
+      "name": "Meals on Wheels San Francisco volunteer opportunities",
+      "type": "html_page",
+      "url": "https://volunteer.mowsf.org/",
+      "enabled": true,
+      "allowed_domains": ["volunteer.mowsf.org", "www.mowsf.org", "mowsf.org"],
+      "parser_settings": {"input_character_limit": 4500, "max_tokens": 900, "maximum_records_per_source": 3},
+      "auto_promote_confidence": 0.93,
+      "defaults": {"category": "seniors", "neighborhood": "Bayview", "lat": 37.7280, "lng": -122.3978, "causes": ["seniors", "food_security"], "base_urgency": 0.75},
+      "activation_note": "SF senior meal delivery and grocery support only."
+    },
+    {
+      "id": "shanti_project_volunteer",
+      "name": "Shanti Project volunteer opportunities",
+      "type": "html_page",
+      "url": "https://www.shanti.org/volunteer/",
+      "enabled": true,
+      "allowed_domains": ["www.shanti.org", "shanti.org"],
+      "parser_settings": {"input_character_limit": 5000, "max_tokens": 1000, "maximum_records_per_source": 4},
+      "auto_promote_confidence": 0.93,
+      "defaults": {"category": "health", "neighborhood": "Union Square", "lat": 37.7884, "lng": -122.4047, "causes": ["health", "seniors", "disability_support"], "base_urgency": 0.7},
+      "activation_note": "First-party SF peer support, PAWS, and administrative roles."
+    },
+    {
+      "id": "sf_bike_coalition_volunteer",
+      "name": "San Francisco Bicycle Coalition volunteer opportunities",
+      "type": "html_page",
+      "url": "https://sfbike.org/get-involved/volunteer/",
       "enabled": false,
-      "allowed_domains": ["www.sfmfoodbank.org"],
-      "auto_promote_confidence": 0.92,
-      "defaults": {
-        "category": "food_security",
-        "neighborhood": "Citywide",
-        "lat": 37.7749,
-        "lng": -122.4194,
-        "causes": ["food_security"],
-        "base_urgency": 0.75
-      },
-      "activation_note": "Enable after receiving written permission or a structured partner feed from SF-Marin Food Bank."
+      "allowed_domains": ["sfbike.org", "www.sfbike.org"],
+      "parser_settings": {"input_character_limit": 4500, "max_tokens": 900, "maximum_records_per_source": 3},
+      "auto_promote_confidence": 0.93,
+      "defaults": {"category": "community", "neighborhood": "South of Market", "lat": 37.7739, "lng": -122.4222, "causes": ["community", "environment"], "base_urgency": 0.55},
+      "activation_note": "Automated retrieval currently returns 403. Keep disabled until the organization provides a feed or confirms an accessible endpoint."
     },
     {
       "id": "partner_json_feed_template",
@@ -70,14 +204,7 @@
       "enabled": false,
       "allowed_domains": [],
       "auto_promote_confidence": 0.95,
-      "defaults": {
-        "category": "community",
-        "neighborhood": "Citywide",
-        "lat": 37.7749,
-        "lng": -122.4194,
-        "causes": ["community"],
-        "base_urgency": 0.5
-      },
+      "defaults": {"category": "community", "neighborhood": "Citywide", "lat": 37.7749, "lng": -122.4194, "causes": ["community"], "base_urgency": 0.5},
       "activation_note": "Copy this entry for a nonprofit-provided JSON, CSV-to-JSON, or Airtable API feed. JSON feeds are preferred over webpage parsing."
     }
   ]

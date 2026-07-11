@@ -71,7 +71,7 @@ jobs:
         type: SECRET
       - key: GRADIENT_MODEL
         scope: RUN_TIME
-        value: "llama3.3-70b-instruct"
+        value: "llama-4-maverick"
       - key: GRADIENT_BASE_URL
         scope: RUN_TIME
         value: "https://inference.do-ai.run/v1"

@@ -3,13 +3,13 @@
   "model": {
     "provider": "DigitalOcean Serverless Inference",
     "env_var": "GRADIENT_MODEL",
-    "default": "llama3.3-70b-instruct",
+    "default": "llama-4-maverick",
     "temperature": 0.1,
-    "max_tokens": 1400,
+    "max_tokens": 1800,
     "timeout_seconds": 45,
     "input_character_limit": 14000,
-    "maximum_records_per_source": 8,
-    "reason": "Low temperature keeps catalog fields stable. Bounded source text and a longer job-only timeout make extraction reliable without delaying the volunteer-facing API."
+    "maximum_records_per_source": 12,
+    "reason": "Llama 4 Maverick is the tested default for reliable structured extraction on this DigitalOcean account. Low temperature plus a required source-evidence quote keep catalog fields stable and auditable, while bounded source text and a longer job-only timeout protect the volunteer-facing API."
   },
   "promotion_policy": {
     "minimum_confidence": 0.9,
@@ -44,10 +44,14 @@
     "causes",
     "base_urgency",
     "source_url",
+    "evidence",
     "confidence"
   ],
   "parser_rules": [
     "Extract only volunteer opportunities explicitly present in the supplied source content.",
+    "For every record, provide evidence: a short exact quote from the supplied source proving that the role or shift exists. Do not paraphrase the evidence.",
+    "Tenderly is San Francisco-only. Exclude listings located in Marin, Oakland, the East Bay, or anywhere outside San Francisco.",
+    "If the source does not publish a date or duration on the supplied page, set commitment to 'See official source for schedule'.",
     "Do not invent location, capacity, requirements, dates, or availability. Use the source defaults only when a field is absent.",
     "Use one of allowed_categories. Choose community when the source does not support a more specific category.",
     "Return a confidence score from 0 through 1 for each record.",

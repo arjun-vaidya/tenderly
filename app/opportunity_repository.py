@@ -139,6 +139,24 @@ def create_import(source_id: str, source_url: str, content_hash: str, raw_conten
             return str(row[0]) if row else None
 
 
+def latest_import_content(source_id: str) -> str | None:
+    """Return the latest raw snapshot for a source, for safe re-normalization."""
+    with psycopg.connect(_require_database(), row_factory=dict_row) as connection:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT raw_content
+                FROM opportunity_imports
+                WHERE source_id = %s
+                ORDER BY imported_at DESC
+                LIMIT 1
+                """,
+                (source_id,),
+            )
+            row = cursor.fetchone()
+            return row["raw_content"] if row else None
+
+
 def finish_import(import_id: str, status: str, parsed_records: list[dict] | None = None, error: str | None = None) -> None:
     with psycopg.connect(_require_database()) as connection:
         with connection.cursor() as cursor:
@@ -157,6 +175,9 @@ def upsert_opportunity(connection: Any, record: dict[str, Any]) -> str:
     source_key = record["source_key"]
     opportunity_id = record.get("opportunity_id") or stable_opportunity_id(source_key)
     organization_id = str(uuid.uuid4())
+    status = record.get("status", "active")
+    if status not in {"draft", "active", "paused", "closed"}:
+        raise ValueError(f"invalid opportunity status: {status!r}")
 
     organization_metadata = record.get("organization_metadata", {})
     metadata = record.get("source_metadata", {})
@@ -205,7 +226,7 @@ def upsert_opportunity(connection: Any, record: dict[str, Any]) -> str:
                 neighborhood, lat, lng, commitment, availability, needed_skills, causes, base_urgency,
                 source_url, source_last_seen_at, status, missed_source_runs
             ) VALUES (
-                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), 'active', 0
+                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), %s, 0
             )
             ON CONFLICT (source_key) DO UPDATE SET
                 organization_id = EXCLUDED.organization_id,
@@ -222,7 +243,7 @@ def upsert_opportunity(connection: Any, record: dict[str, Any]) -> str:
                 base_urgency = EXCLUDED.base_urgency,
                 source_url = EXCLUDED.source_url,
                 source_last_seen_at = now(),
-                status = 'active',
+                status = EXCLUDED.status,
                 missed_source_runs = 0,
                 updated_at = now()
             RETURNING opportunity_id
@@ -244,6 +265,7 @@ def upsert_opportunity(connection: Any, record: dict[str, Any]) -> str:
                 record["causes"],
                 record["base_urgency"],
                 record["source_url"],
+                status,
             ),
         )
         opportunity_row = cursor.fetchone()
@@ -411,6 +433,35 @@ def set_opportunity_status(source_key: str, status: str) -> None:
                 "UPDATE opportunities SET status = %s, updated_at = now() WHERE source_key = %s",
                 (status, source_key),
             )
+
+
+def purge_source_catalog(source_id: str) -> int:
+    """Remove a source's catalog rows while retaining its import audit history."""
+    with psycopg.connect(_require_database()) as connection:
+        with connection.cursor() as cursor:
+            # Staging records are retained as an audit trail, but their link to
+            # a promoted catalog row must be cleared before that row is removed.
+            cursor.execute(
+                """
+                UPDATE opportunity_staging
+                SET promoted_opportunity_id = NULL
+                WHERE promoted_opportunity_id IN (
+                    SELECT opportunity_id FROM opportunities WHERE source_id = %s
+                )
+                """,
+                (source_id,),
+            )
+            cursor.execute("DELETE FROM opportunities WHERE source_id = %s", (source_id,))
+            removed = cursor.rowcount
+            cursor.execute(
+                """
+                DELETE FROM organizations AS org
+                WHERE org.source_id = %s
+                  AND NOT EXISTS (SELECT 1 FROM opportunities AS opp WHERE opp.organization_id = org.id)
+                """,
+                (source_id,),
+            )
+    return removed
 
 
 def save_staged_record(

@@ -14,6 +14,11 @@ GRADIENT_BASE_URL = os.environ.get("GRADIENT_BASE_URL", "https://inference.do-ai
 # when DATABASE_URL is configured by DigitalOcean App Platform.
 DATABASE_URL = os.environ.get("DATABASE_URL", "")
 OPPORTUNITY_INGESTION_ENABLED = os.environ.get("OPPORTUNITY_INGESTION_ENABLED", "false").lower() == "true"
+OPPORTUNITY_INGESTION_SOURCE_IDS = {
+    source_id.strip()
+    for source_id in os.environ.get("OPPORTUNITY_INGESTION_SOURCE_IDS", "").split(",")
+    if source_id.strip()
+}
 OPPORTUNITY_IMPORT_TIMEOUT_SECONDS = float(os.environ.get("OPPORTUNITY_IMPORT_TIMEOUT_SECONDS", "20"))
 OPPORTUNITY_IMPORT_USER_AGENT = os.environ.get(
     "OPPORTUNITY_IMPORT_USER_AGENT", "TenderlyOpportunityBot/1.0 (contact: hello@tenderly.app)"
